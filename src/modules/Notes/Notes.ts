@@ -7,6 +7,7 @@ import {
 import { generateError } from "../config/function";
 import Notes from "../../schemas/Notes/Notes";
 import { PaginationLimit } from "../config/constant";
+import { upload } from "../config/fileuploadService";
 
 // create the notes category
 export const createCategory = async (
@@ -66,7 +67,7 @@ export const getCategories = async (
       {
         $addFields: {
           createdBy: { $ifNull: [{ $arrayElemAt: ["$createdBy", 0] }, null] },
-          totalChildData : { $size: "$notes" },
+          totalChildData: { $size: "$notes" },
         },
       },
       {
@@ -74,12 +75,14 @@ export const getCategories = async (
           createdBy: {
             password: 0,
           },
-          notes : 0
+          notes: 0,
         },
       },
     ];
 
-    const perPage = req.query.limit ? parseInt(req.query.limit) : PaginationLimit;
+    const perPage = req.query.limit
+      ? parseInt(req.query.limit)
+      : PaginationLimit;
     const page = req.query.page ? parseInt(req.query.page) : 1;
 
     const countPipeline = [...pipeline];
@@ -88,7 +91,9 @@ export const getCategories = async (
     });
 
     const [totalCountResult] = await NotesCategory.aggregate(countPipeline);
-    const totalDocuments = totalCountResult ? totalCountResult.totalDocuments : 0;
+    const totalDocuments = totalCountResult
+      ? totalCountResult.totalDocuments
+      : 0;
 
     const totalPages = Math.ceil(totalDocuments / perPage);
 
@@ -104,16 +109,14 @@ export const getCategories = async (
 
     res.status(200).send({
       message: "Get Categories successfully",
-      data: {categories,totalPages},
+      data: { categories, totalPages },
       statusCode: 200,
       success: true,
     });
-
   } catch (err) {
     next(err);
   }
 };
-
 
 // create the new pdf
 export const createNote = async (
@@ -147,5 +150,16 @@ export const createNote = async (
     }
   } catch (err) {
     next(err);
+  }
+};
+
+export const uploadNotes = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file provided.' });
+    }
+      res.status(200).json({ message: 'File uploaded successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };

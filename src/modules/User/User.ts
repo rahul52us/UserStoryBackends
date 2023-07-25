@@ -116,7 +116,7 @@ const createUser = async (
           data: responseUser,
           statusCode: 200,
           success: true,
-          message: `${user.username} account has been created for the ${selectedCompany.company_name} organisation`,
+          message: `${user.username} account has been created for the ${selectedCompany.organisation_name} organisation`,
         });
       }
     } else {
@@ -388,7 +388,6 @@ const changePassword = async (req: any, res: Response, next: NextFunction) => {
         success: true,
       });
     }
-
   } catch (err) {
     next(err);
   }

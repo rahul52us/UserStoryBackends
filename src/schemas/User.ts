@@ -5,7 +5,7 @@ export interface UserInterface extends Document {
   username: string;
   pic: string;
   position?: string[];
-  company: Schema.Types.ObjectId;
+  organisation: Schema.Types.ObjectId;
   profile_details: Schema.Types.ObjectId;
   is_active: boolean;
   role: string;
@@ -21,7 +21,7 @@ const UserSchema: Schema<UserInterface> = new Schema<UserInterface>(
       type: Array,
       default: ["web designer"],
     },
-    company: { type: Schema.Types.ObjectId, ref: "Company" },
+    organisation: { type: Schema.Types.ObjectId, ref: "Company" },
     profile_details: { type: Schema.Types.ObjectId, ref: "ProfileDetails" },
     is_active: { type: Boolean, default: false },
     role: {

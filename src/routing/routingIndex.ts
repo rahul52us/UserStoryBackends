@@ -4,6 +4,7 @@ import ProjectRouting from "./project";
 import Testimonial from "./testimonial";
 import Videos from './video'
 import NotesRouting from './notes'
+import classRouting from './class'
 
 const importRoutings = (app: any) => {
   app.use("/api/auth", userRouting);
@@ -12,6 +13,7 @@ const importRoutings = (app: any) => {
   app.use("/api/testimonial", Testimonial);
   app.use("/api/videos",Videos)
   app.use("/api/notes",NotesRouting)
+  app.use('/api/class',classRouting)
 };
 
 export default importRoutings;

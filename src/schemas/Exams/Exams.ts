@@ -26,44 +26,9 @@ const ExaminationSchema = new mongoose.Schema(
 
 const Examination = mongoose.model("Examination", ExaminationSchema);
 
-const semisterSchema = new mongoose.Schema(
-  {
-    startDate: {
-      type: Date,
-      required: true,
-    },
-
-    endDate: {
-      type: Date,
-      required: true,
-    },
-
-    subjects: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Subject",
-      },
-    ],
-
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-
-    noOfTest: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Test",
-      },
-    ],
-  },
-  { timestamps: true }
-);
-
-const Semister = mongoose.model("Semister", semisterSchema);
-
 const TestSchema = new mongoose.Schema(
   {
+
     startDate: {
       type: Date,
       required: true,
@@ -74,21 +39,69 @@ const TestSchema = new mongoose.Schema(
       required: true,
     },
 
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-
     subjects: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Subject",
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        gradingType: {
+          type: String,
+          enum: ['number', 'grades'],
+          required: true,
+        },
+        totalMarks: {
+          type: Number,
+          required: true,
+        },
+        marks: {
+          type: Number,
+          required: true,
+        },
       },
     ],
   },
   { timestamps: true }
 );
 
+
 const Test = mongoose.model("Test", TestSchema);
+
+const semisterSchema = new mongoose.Schema({
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: true,
+  },
+  subjects: [
+    {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      gradingType: {
+        type: String,
+        enum: ['number', 'grades'],
+        required: true,
+      },
+      totalMarks: {
+        type: Number,
+        required: true,
+      },
+      marks: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  noOfTest: [TestSchema],
+});
+
+const Semister = mongoose.model("Semister", semisterSchema);
 
 export { Examination, Semister, Test };

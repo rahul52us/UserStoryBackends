@@ -14,6 +14,11 @@ export const sectionSchema = new mongoose.Schema(
       required: true,
     },
 
+    examination : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : 'Examination'
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -22,7 +27,7 @@ export const sectionSchema = new mongoose.Schema(
 
     mediumType: {
       type: String,
-      default:'english'
+      default: "english",
     },
 
     isActive: {
@@ -34,4 +39,4 @@ export const sectionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('Section', sectionSchema)
+export default mongoose.model("Section", sectionSchema);

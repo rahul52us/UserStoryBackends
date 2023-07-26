@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
 
-const createExams = (req: any, res: Response, next: NextFunction) => {
+const createSemester = (req: any, res: Response, next: NextFunction) => {
   try {
 
   } catch (err) {
@@ -8,4 +8,4 @@ const createExams = (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export { createExams };
+export { createSemester };

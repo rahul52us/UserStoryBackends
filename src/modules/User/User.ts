@@ -63,7 +63,7 @@ const createUser = async (
         username: req.body.username,
         name: req.body.name,
         password: req.body.password,
-        company: selectedCompany._id,
+        organisation: selectedCompany._id,
         role: req.body.role,
         is_active: selectedCompany.verified_email_allowed ? false : true,
       });

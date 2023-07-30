@@ -28,10 +28,12 @@ app.use(cors({
 }));
 
 // Apply the error handler middleware
-app.use(errorMiddleware);
 
 // import routing function
 importRoutings(app);
+
+app.use(errorMiddleware);
+
 
 server.listen(process.env.PORT, () => {
   console.log(`The server is running on port ${process.env.PORT}`);

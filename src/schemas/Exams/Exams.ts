@@ -28,6 +28,10 @@ const Examination = mongoose.model("Examination", ExaminationSchema);
 
 const TestSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      trim: true,
+    },
 
     startDate: {
       type: Date,
@@ -48,14 +52,10 @@ const TestSchema = new mongoose.Schema(
         },
         gradingType: {
           type: String,
-          enum: ['number', 'grades'],
+          enum: ["number", "grades"],
           required: true,
         },
         totalMarks: {
-          type: Number,
-          required: true,
-        },
-        marks: {
           type: Number,
           required: true,
         },
@@ -65,10 +65,13 @@ const TestSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
 const Test = mongoose.model("Test", TestSchema);
 
 const semisterSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    trim: true,
+  },
   startDate: {
     type: Date,
     required: true,
@@ -86,7 +89,7 @@ const semisterSchema = new mongoose.Schema({
       },
       gradingType: {
         type: String,
-        enum: ['number', 'grades'],
+        enum: ["number", "grades"],
         required: true,
       },
       totalMarks: {

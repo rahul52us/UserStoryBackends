@@ -1,103 +1,82 @@
 import Joi from "joi";
 
+const customMessages = {
+  "string.empty": "{#label} is required",
+  "any.required": "{#label} is required",
+  "string.min": "{#label} should be at least {#limit} characters",
+  "string.max": "{#label} should be at most {#limit} characters",
+  "number.min": "{#label} should be at least {#limit}",
+  "number.max": "{#label} should be at most {#limit}",
+};
+
 export const notesCategoryValidation = Joi.object({
-  company: Joi.any().required().allow(null).messages({
-    "any.required": "Organisation is required",
-    "string.empty": "Organisation is required",
-  }),
+  organisation: Joi.any().required().allow(null).messages(customMessages),
 
   thumbnail: Joi.string().trim(),
 
-  title: Joi.string().trim().required().min(2).max(180).messages({
-    "string.min": "Title should be at least 2 characters",
-    "string.max": "Title should be at most 180 characters",
-    "any.required": "Title is required",
-  }),
+  title: Joi.string().trim().required().min(2).max(180).messages(customMessages),
 
-  description: Joi.string().trim().required().min(10).max(220).messages({
-    "string.min": "Description should be at least 10 characters",
-    "string.max": "Description should be at most 220 characters",
-    "any.required": "Description is required",
-  }),
+  description: Joi.string().trim().required().min(10).max(220).messages(customMessages),
 
   details: Joi.string().trim(),
 
-  discountPrice: Joi.string()
-    .trim()
-    .max(10)
-    .message("Discount price should be at most 10 characters"),
+  startYear: Joi.string().trim().required().min(2).max(180).messages({
+    ...customMessages,
+    "any.required": "Start Year is required",
+  }),
 
-    originalPrice: Joi.string()
-    .trim()
-    .max(10)
-    .message("Original price should be at most 10 characters"),
+  endYear: Joi.string().trim().required().min(2).max(180).messages({
+    ...customMessages,
+    "any.required": "End Year is required",
+  }),
 
-    rating: Joi.string()
-    .trim()
-    .max(5)
-    .message("Rating should be at most 5 characters"),
+  discountPrice: Joi.string().trim().max(10).messages(customMessages),
+
+  originalPrice: Joi.string().trim().max(10).messages(customMessages),
+
+  rating: Joi.number().min(1).max(5).messages(customMessages),
 
   createdBy: Joi.string().required(),
 
-  amountType: Joi.string()
-    .trim()
-    .max(10)
-    .message("Amount type should be at most 10 characters"),
-  pricingType: Joi.string().valid("paid", "free").default("free"),
+  amountType: Joi.string().trim().max(10).messages(customMessages),
 
+  pricingType: Joi.string().valid("paid", "free").default("free"),
 }).options({ abortEarly: false });
 
 export const notesCreateValidation = Joi.object({
-  company: Joi.any().required().allow(null).messages({
-    "any.required": "Organisation is required",
-    "string.empty": "Organisation is required",
-  }),
+  organisation: Joi.any().required().allow(null).messages(customMessages),
 
-  category : Joi.any().required().allow(null).messages({
-    "any.required": "Category is required",
-    "string.empty": "Category is required",
-  }),
+  category: Joi.any().required().allow(null).messages(customMessages),
 
   thumbnail: Joi.string().trim(),
 
   pdf: Joi.string().trim(),
 
-  title: Joi.string().trim().required().min(2).max(180).messages({
-    "string.min": "Title should be at least 2 characters",
-    "string.max": "Title should be at most 180 characters",
-    "any.required": "Title is required",
+  title: Joi.string().trim().required().min(2).max(180).messages(customMessages),
+
+  startYear: Joi.string().trim().required().min(2).max(180).messages({
+    ...customMessages,
+    "any.required": "Start Year is required",
   }),
 
-  description: Joi.string().trim().required().min(10).max(420).messages({
-    "string.min": "Description should be at least 10 characters",
-    "string.max": "Description should be at most 220 characters",
-    "any.required": "Description is required",
+  endYear: Joi.string().trim().required().min(2).max(180).messages({
+    ...customMessages,
+    "any.required": "End Year is required",
   }),
+
+  description: Joi.string().trim().required().min(10).max(420).messages(customMessages),
 
   details: Joi.string().trim(),
 
-  discountPrice: Joi.string()
-    .trim()
-    .max(10)
-    .message("Discount price should be at most 10 characters"),
+  discountPrice: Joi.string().trim().max(10).messages(customMessages),
 
-  originalPrice: Joi.string()
-    .trim()
-    .max(10)
-    .message("Original price should be at most 10 characters"),
+  originalPrice: Joi.string().trim().max(10).messages(customMessages),
 
-  rating: Joi.string()
-    .trim()
-    .max(5)
-    .message("Rating should be at most 5 characters"),
+  rating: Joi.number().min(1).max(5).messages(customMessages),
 
   createdBy: Joi.string().required(),
 
-  amountType: Joi.string()
-    .trim()
-    .max(10)
-    .message("Amount type should be at most 10 characters"),
+  amountType: Joi.string().trim().max(10).messages(customMessages),
 
   pricingType: Joi.string().valid("paid", "free").default("free"),
-
 }).options({ abortEarly: false });

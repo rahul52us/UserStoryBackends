@@ -7,7 +7,6 @@ import {
 import { generateError } from "../config/function";
 import Notes from "../../schemas/Notes/Notes";
 import { PaginationLimit } from "../config/constant";
-import { upload } from "../config/fileuploadService";
 
 // create the notes category
 export const createCategory = async (
@@ -17,7 +16,7 @@ export const createCategory = async (
 ) => {
   try {
     req.body.createdBy = req.userId;
-    req.body.company = req.bodyData.company;
+    req.body.organisation = req.bodyData.organisation;
     const result = notesCategoryValidation.validate(req.body);
     if (result.error) {
       throw generateError(result.error.details, 422);
@@ -46,7 +45,7 @@ export const getCategories = async (
   try {
     const pipeline: any = [
       {
-        $match: { company: req.bodyData.company },
+        $match: { organisation: req.bodyData.organisation },
       },
       {
         $lookup: {
@@ -125,7 +124,7 @@ export const createNote = async (
   next: NextFunction
 ) => {
   try {
-    req.body.company = req.bodyData.company;
+    req.body.organisation = req.bodyData.organisation;
     req.body.createdBy = req.userId;
     const result = notesCreateValidation.validate(req.body);
     if (result.error) {
@@ -153,13 +152,17 @@ export const createNote = async (
   }
 };
 
-export const uploadNotes = async (req: any, res: Response, next: NextFunction) => {
+export const uploadNotes = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: 'No file provided.' });
+      return res.status(400).json({ error: "No file provided." });
     }
-      res.status(200).json({ message: 'File uploaded successfully.' });
+    res.status(200).json({ message: "File uploaded successfully." });
   } catch (err) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const ClassSchema = new mongoose.Schema(
   {
-
     name: {
       type: String,
       trim: true,
@@ -19,12 +18,7 @@ const ClassSchema = new mongoose.Schema(
       required:true
     },
 
-    hasSections: {
-      type : Boolean,
-      default : false
-    },
-
-    mediumType : {
+    medium : {
       type : String,
       default:'english'
     },

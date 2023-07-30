@@ -1,19 +1,21 @@
 import userRouting from "./User";
 import companyOrganisation from "./company";
-import ProjectRouting from "./project";
-import Testimonial from "./testimonial";
-import Videos from './video'
-import NotesRouting from './notes'
-import classRouting from './class'
+import projectRouting from "./project";
+import testimonialRouting from "./testimonial";
+import videosRouting from "./video";
+import notesRouting from "./notes";
+import classRouting from "./class";
+import examRouting from "./exam";
 
 const importRoutings = (app: any) => {
   app.use("/api/auth", userRouting);
   app.use("/api/organisation", companyOrganisation);
-  app.use("/api/project", ProjectRouting);
-  app.use("/api/testimonial", Testimonial);
-  app.use("/api/videos",Videos)
-  app.use("/api/notes",NotesRouting)
-  app.use('/api/class',classRouting)
+  app.use("/api/project", projectRouting);
+  app.use("/api/testimonial", testimonialRouting);
+  app.use("/api/videos", videosRouting);
+  app.use("/api/notes", notesRouting);
+  app.use("/api/class", classRouting);
+  app.use("/api/exam", examRouting);
 };
 
 export default importRoutings;

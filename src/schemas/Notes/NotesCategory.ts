@@ -3,7 +3,7 @@ import Notes, { NotesI, NotesSchema } from "./Notes";
 
 interface NotesCategoryInterface extends Document {
   user: mongoose.Schema.Types.ObjectId;
-  company: mongoose.Schema.Types.ObjectId;
+  organisation: mongoose.Schema.Types.ObjectId;
   thumbnail: string;
   title: string;
   details: string;
@@ -19,7 +19,7 @@ interface NotesCategoryInterface extends Document {
 
 const NotesCategorySchema = new mongoose.Schema<NotesCategoryInterface>(
   {
-    company: {
+    organisation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
       required: true,

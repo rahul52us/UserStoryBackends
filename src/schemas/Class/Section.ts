@@ -25,7 +25,7 @@ export const sectionSchema = new mongoose.Schema(
       required: true,
     },
 
-    mediumType: {
+    medium : {
       type: String,
       default: "english",
     },

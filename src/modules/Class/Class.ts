@@ -114,4 +114,5 @@ const getClasses = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
+
 export { Createclass, getClasses, UpdateClass };

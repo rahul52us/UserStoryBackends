@@ -16,10 +16,12 @@ dotenv.config();
 const server = http.createServer(app);
 setupSocket(server);
 
+
 // use the body-parser
 app.use(bodyParser.json({ limit: "50mb" })); // Increase the size limit for JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use('/notes', express.static(path.join(__dirname,'src','../public/notes')));
+
 
 // Enable CORS for all routes and all origins
 app.use(cors({
@@ -27,7 +29,8 @@ app.use(cors({
   methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
 }));
 
-// Apply the error handler middleware
+
+
 
 // import routing function
 importRoutings(app);

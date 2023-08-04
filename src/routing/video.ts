@@ -13,4 +13,5 @@ router.post("/create", authenticate, createVideo);
 router.post("/category", authenticate, createVideoCategory);
 router.post("/categories", authenticate, getCategories);
 router.post('/videos',authenticate, getVideos)
+
 export default router;

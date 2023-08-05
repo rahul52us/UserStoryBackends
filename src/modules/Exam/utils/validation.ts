@@ -43,6 +43,7 @@ const semesterSchemaValidation = Joi.object({
 }).options({ abortEarly: false });
 
 const examinationsDataValidation = Joi.object({
+  section:Joi.string().required(),
   examinationsData: Joi.array()
     .items(
       Joi.object({

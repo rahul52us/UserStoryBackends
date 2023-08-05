@@ -96,10 +96,6 @@ const semisterSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-      marks: {
-        type: Number,
-        required: true,
-      },
     },
   ],
   noOfTest: [TestSchema],

@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import { Examination, Semister, Test } from "../../schemas/Exams/Exams";
 import { examinationsDataValidation } from "./utils/validation";
 import { generateError } from "../config/function";
+import Section from "../../schemas/Class/Section";
 
 const createExamination = async (
   req: any,
@@ -15,6 +16,12 @@ const createExamination = async (
 
     if (result.error) {
       throw generateError(result.error.details[0], 422);
+    }
+
+    const section = await Section.findById(req.body.section)
+
+    if(!section) {
+      throw generateError(`This Section does not exists`, 400)
     }
 
     req.body.organisation = req.bodyData.organisation;
@@ -52,6 +59,8 @@ const createExamination = async (
 
       savedExamination.semister = semesters;
       await savedExamination.save();
+      section.examination = savedExamination._id
+      await section.save()
     }
 
     const fetchData: any = [];
@@ -73,4 +82,23 @@ const createExamination = async (
   }
 };
 
-export { createExamination };
+
+const getExamBySection = async (req : any , res : Response, next : NextFunction) => {
+  try
+  {
+    const exams = await Examination.findById(req.params.section).populate('semister')
+    res.status(200).send({
+      data : exams,
+      message : 'Get Exams Successfully',
+      statusCode : 200,
+      status : 'success'
+    })
+  }
+  catch(err)
+  {
+    next(err)
+  }
+}
+
+
+export { createExamination, getExamBySection };

@@ -31,6 +31,10 @@ app.use(cors({
 // import routing function
 importRoutings(app);
 
+app.use('/',(req,res) => {
+  res.status(200).send("Welcome")
+})
+
 app.use(errorMiddleware);
 
 

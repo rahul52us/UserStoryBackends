@@ -9,7 +9,7 @@ const connectToDatabase = async (): Promise<mongoose.Connection> => {
     const options: any = {
       useUnifiedTopology: true,
     };
-    await mongoose.connect('mongodb://localhost:27017/SchoolPractice', options);
+    await mongoose.connect('mongodb+srv://rahulkush5225:Rahul52us@cluster0.uku04rj.mongodb.net/', options);
     console.log('Connected to MongoDB Atlas');
     return mongoose.connection;
   } catch (error) {

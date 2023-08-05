@@ -16,10 +16,6 @@ dotenv.config();
 const server = http.createServer(app);
 setupSocket(server);
 
-app.use('/',(req,res) => {
-  res.status(200).send("Welcome to Backends")
-})
-
 // use the body-parser
 app.use(bodyParser.json({ limit: "50mb" })); // Increase the size limit for JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
@@ -31,9 +27,6 @@ app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
 }));
-
-
-
 
 // import routing function
 importRoutings(app);

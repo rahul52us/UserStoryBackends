@@ -19,7 +19,7 @@ const UserSchema: Schema<UserInterface> = new Schema<UserInterface>(
     pic: { type: String, trim: true },
     position: {
       type: Array,
-      default: ["web designer"],
+      default: ["student"],
     },
     organisation: { type: Schema.Types.ObjectId, ref: "Company" },
     profile_details: { type: Schema.Types.ObjectId, ref: "ProfileDetails" },

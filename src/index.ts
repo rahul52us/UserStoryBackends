@@ -32,7 +32,7 @@ app.use(cors({
 importRoutings(app);
 
 app.use('/',(req,res) => {
-  res.status(200).send("Welcome")
+  res.status(200).send("Welcome to our app")
 })
 
 app.use(errorMiddleware);

@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import Class from "../../schemas/Class/Class";
 import Section from "../../schemas/Class/Section";
 import { generateError } from "../config/function";
+import { getClassesValidation } from "./utils/validation";
 
 const Createclass = async (req: any, res: Response, next: NextFunction) => {
   try {
@@ -98,11 +99,19 @@ const UpdateClass = async (req: any, res: Response, next: NextFunction) => {
 
 const getClasses = async (req: any, res: Response, next: NextFunction) => {
   try {
+    const { error } = getClassesValidation.validate(req.body);
+    if (error) {
+      throw generateError(error.details, 422);
+    }
+
     const classes = await Class.find({
       organisation: req.bodyData.organisation,
-    }).sort({createdAt : -1})
+      startYear: { $gte: req.body.startYear },
+      endYear: { $lte: req.body.endYear },
+    })
       .populate("createdBy")
       .populate("sections");
+
     return res.status(200).send({
       message: "Get Classes Successfully",
       data: classes,
@@ -113,6 +122,7 @@ const getClasses = async (req: any, res: Response, next: NextFunction) => {
     next(err);
   }
 };
+
 
 
 export { Createclass, getClasses, UpdateClass };

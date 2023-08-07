@@ -1,20 +1,33 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+
+interface addressInfo  {
+  address?:string;
+  country?:string;
+  state?:string;
+  city?:string;
+  pinCode?:string
+}
+
 interface ProfileDetailsI extends Document {
   user: mongoose.Schema.Types.ObjectId;
-  nickName?:string;
+  nickName?: string;
+  fatherName?: string;
+  motherName?: string;
+  sibling?: number;
   mobileNo?: string;
-  language?:String;
-  emergencyNo?:String;
-  address1?:string;
-  address2?:string;
+  language?: String[];
+  emergencyNo?: String;
+  address1?: string;
+  address2?: string;
   country?: string;
   state?: string;
   city?: string;
-  pinCode?:string;
+  pinCode?: string;
   linkedInLink?: string;
   githubLink?: string;
   websiteLink?: string;
+  addressInfo?:addressInfo[]
 }
 
 const ProfileDetailsSchema = new mongoose.Schema<ProfileDetailsI>({
@@ -24,45 +37,42 @@ const ProfileDetailsSchema = new mongoose.Schema<ProfileDetailsI>({
     unique: true,
     ref: "User",
   },
-  nickName:{
-    type:String,
-    trim:true
+  nickName: {
+    type: String,
+    trim: true,
   },
-  language:{
-    type : String,
-    trim : true
+  fatherName: {
+    type: String,
+    trim: true,
+  },
+  motherName: {
+    type: String,
+    trim: true,
+  },
+  sibling: {
+    type: Number,
+  },
+  language: {
+    type: Array,
+    default: [],
   },
   mobileNo: {
     type: String,
     trim: true,
   },
-  emergencyNo:{
-    type : String,
-    trim : true
-  },
-  address1: {
-    type : String,
-    trim : true
-  },
-  address2:{
-    type : String,
-    trim : true
-  },
-  country: {
+  emergencyNo: {
     type: String,
     trim: true,
   },
-  state: {
-    type: String,
-    trim: true,
-  },
-  city: {
-    type: String,
-    trim: true,
-  },
-  pinCode:{
-    type : String,
-    trim : true
+  addressInfo: {
+    type: [{
+      address : String,
+      country: String,
+      state:String,
+      city: String,
+      pinCode: String
+    }],
+    default: [],
   },
   linkedInLink: {
     type: String,

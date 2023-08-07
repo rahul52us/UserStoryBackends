@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const markSheetSchema = new mongoose.Schema(
   {
-    studentId: {
+    student: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    organisationId: {
+    organisation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
     },
@@ -22,4 +22,4 @@ const markSheetSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("MarkSheet", markSheetSchema);
+export default mongoose.model("MarkSheet", markSheetSchema);

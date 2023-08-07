@@ -1,21 +1,25 @@
 import mongoose from "mongoose";
 
 const studentSchema = new mongoose.Schema({
-  userId : {
+  user : {
     type : mongoose.Schema.Types.ObjectId,
-    ref : 'User'
+    ref : 'User',
+    required:true
   },
-  organisationId : {
+  organisation : {
     type : mongoose.Schema.Types.ObjectId,
-    ref : 'Company'
+    ref : 'Company',
+    required:true
   },
   class : {
     type : mongoose.Schema.Types.ObjectId,
-    ref : 'Class'
+    ref : 'Class',
+    required:true
   },
   section : {
     type : mongoose.Schema.Types.ObjectId,
-    ref : 'Section'
+    ref : 'Section',
+    required:true
   },
   marksheet : {
     type : mongoose.Schema.Types.ObjectId,
@@ -23,4 +27,4 @@ const studentSchema = new mongoose.Schema({
   }
 },{timestamps : true})
 
-module.exports = mongoose.model('Student', studentSchema)
+export default mongoose.model('Student', studentSchema)

@@ -28,6 +28,7 @@ const createStudent = async (req: any, res: Response, next: NextFunction) => {
       organisation: req.bodyData.organisation,
       pic: value.pic,
       password: value.password,
+      is_active:true
     });
 
     const savedUser = await createdUser.save();
@@ -97,20 +98,36 @@ const getStudents = async (req: any, res: Response, next: NextFunction) => {
       throw generateError(error.details, 422);
     }
 
-    const student = await Student.find({
+    const page = req.query.page || 1; // Get the requested page from the query parameters
+    const perPage = 10; // Number of students per page
+
+    const totalCount = await Student.countDocuments({
+      organisation: req.bodyData.organisation,
+      section: value.section,
+    });
+
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    const students = await Student.find({
       organisation: req.bodyData.organisation,
       section: value.section,
     })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 }) // Sort by createdAt in descending order (newest first)
       .populate({ path: "user", select: "-password" })
-      res.status(200).send({
+      .skip((page - 1) * perPage) // Skip students based on the requested page
+      .limit(perPage); // Limit the number of students per page
+
+    res.status(200).send({
       message: "Get Successfully Students Data",
-      data: student,
+      data: {students,totalPages,currentPage:page},
       statusCode: 200,
+      totalPages,
+      currentPage: page,
     });
   } catch (err) {
     next(err);
   }
 };
+
 
 export { createStudent, getStudents };

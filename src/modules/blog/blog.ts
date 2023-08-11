@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { createBlogValidation } from "./utils/validation";
 import { generateError } from "../config/function";
 import Blog from "../../schemas/Blog/BlogSchema";
+import CommentBlog from "../../schemas/Blog/BlogCommentSchema";
 
 const createBlog = async (req: any, res: Response, next: NextFunction) => {
   try {
@@ -97,4 +98,67 @@ const getBlogById = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export { createBlog, getBlogs, getBlogById, deleteBlogById };
+const createNewComment = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const instance = new CommentBlog({
+      user: req.userId,
+      organisation: req.bodyData.organisation,
+      blog: req.body.blogId,
+      content: req.body.content,
+      parentComment: req.body.parentComment,
+    });
+    const savedBlog = await instance.save();
+    res.status(201).send({
+      message: "COMMENT CREATED SUCCESSFULLY",
+      data: savedBlog,
+      success: true,
+      statusCode: 201,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getComments = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const page = req.query.page || 1;
+    const pageSize = 10;
+    const comments = await CommentBlog.find({ blog: req.params.blogId })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .populate({
+        path: "user",
+        select: "name username",
+      })
+      .populate({
+        path: "replies",
+        populate: {
+          path: "user",
+          select: "name username",
+        },
+      });
+
+    res.status(200).send({
+      message: "GET COMMENTS SUCCESSFULLY",
+      data: comments,
+      statusCode: 200,
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export {
+  createBlog,
+  getBlogs,
+  getBlogById,
+  deleteBlogById,
+  createNewComment,
+  getComments,
+};

@@ -118,7 +118,7 @@ export const getQuiz = async (req: any, res: Response, next: NextFunction) => {
       .populate("section")
       .populate("createdBy");
     res.status(200).json({
-      message: "Categories added to quiz successfully",
+      message: "GET QUIZ SUCCESSFULLY",
       data: quizData,
       statusCode: 200,
       success: true,

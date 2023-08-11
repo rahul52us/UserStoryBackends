@@ -108,7 +108,7 @@ const getClasses = async (req: any, res: Response, next: NextFunction) => {
       organisation: req.bodyData.organisation,
       startYear: { $gte: req.body.startYear },
       endYear: { $lte: req.body.endYear },
-    })
+    }).sort({createdAt:-1})
       .populate("createdBy")
       .populate("sections");
 

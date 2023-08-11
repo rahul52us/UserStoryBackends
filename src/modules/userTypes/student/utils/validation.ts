@@ -17,9 +17,9 @@ export const createStudentValidation = Joi.object({
     name : Joi.string().min(5).max(80).trim().required().messages(customMessages),
     username: Joi.string().min(4).trim().required().messages(customMessages),
     pic: Joi.string().allow("").optional(),
-    class:Joi.string().required(),
-    section:Joi.string().required(),
-    nickName : Joi.string().trim().messages(customMessages),
+    class:Joi.string().required().messages(customMessages),
+    section:Joi.string().required().messages(customMessages),
+    nickName : Joi.string().min(2).trim().messages(customMessages),
     mobileNo: Joi.string().pattern(phoneRegExp).message('please provide a valid number').required(),
     emergencyNo: Joi.string().pattern(phoneRegExp).message('please provide a valid number'),
     password : Joi.string()

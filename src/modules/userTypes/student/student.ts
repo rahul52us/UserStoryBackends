@@ -28,7 +28,7 @@ const createStudent = async (req: any, res: Response, next: NextFunction) => {
       organisation: req.bodyData.organisation,
       pic: value.pic,
       password: value.password,
-      is_active:true
+      is_active: true,
     });
 
     const savedUser = await createdUser.save();
@@ -89,7 +89,6 @@ const createStudent = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-
 const getStudents = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { error, value } = getStudentsValidation.validate(req.body);
@@ -98,8 +97,8 @@ const getStudents = async (req: any, res: Response, next: NextFunction) => {
       throw generateError(error.details, 422);
     }
 
-    const page = req.query.page || 1; // Get the requested page from the query parameters
-    const perPage = 10; // Number of students per page
+    const page = req.query.page || 1;
+    const perPage = 10;
 
     const totalCount = await Student.countDocuments({
       organisation: req.bodyData.organisation,
@@ -112,14 +111,14 @@ const getStudents = async (req: any, res: Response, next: NextFunction) => {
       organisation: req.bodyData.organisation,
       section: value.section,
     })
-      .sort({ createdAt: -1 }) // Sort by createdAt in descending order (newest first)
+      .sort({ createdAt: -1 })
       .populate({ path: "user", select: "-password" })
-      .skip((page - 1) * perPage) // Skip students based on the requested page
-      .limit(perPage); // Limit the number of students per page
+      .skip((page - 1) * perPage)
+      .limit(perPage);
 
     res.status(200).send({
       message: "Get Successfully Students Data",
-      data: {students,totalPages,currentPage:page},
+      data: { students, totalPages, currentPage: page },
       statusCode: 200,
       totalPages,
       currentPage: page,
@@ -128,6 +127,5 @@ const getStudents = async (req: any, res: Response, next: NextFunction) => {
     next(err);
   }
 };
-
 
 export { createStudent, getStudents };

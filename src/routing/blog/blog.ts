@@ -1,6 +1,6 @@
 import express from 'express'
 import authenticate from "../../modules/config/authenticate";
-import { createBlog, deleteBlogById, getBlogById, getBlogs } from '../../modules/blog/blog';
+import { createBlog, createNewComment, deleteBlogById, getBlogById, getBlogs, getComments } from '../../modules/blog/blog';
 
 const router = express.Router()
 
@@ -9,4 +9,7 @@ router.post('/get',authenticate,getBlogs)
 router.get('/:blogId',getBlogById)
 router.delete('/:blogId',authenticate,deleteBlogById)
 
+
+router.post('/comment/:blogId/create',authenticate,createNewComment)
+router.get('/comments/:blogId',getComments)
 export default router;

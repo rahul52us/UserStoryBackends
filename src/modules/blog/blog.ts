@@ -3,6 +3,7 @@ import { createBlogValidation } from "./utils/validation";
 import { generateError } from "../config/function";
 import Blog from "../../schemas/Blog/BlogSchema";
 import CommentBlog from "../../schemas/Blog/BlogCommentSchema";
+import mongoose from "mongoose";
 
 const createBlog = async (req: any, res: Response, next: NextFunction) => {
   try {
@@ -40,24 +41,78 @@ const getBlogs = async (req: any, res: Response, next: NextFunction) => {
     const page = req.query.page || 1;
     const perPage = 10;
 
-    const totalCount = await Blog.countDocuments({
-      organisation: req.bodyData.organisation,
-    });
+    const blogs = await Blog.aggregate([
+      {
+        $match: { organisation: req.bodyData.organisation },
+      },
+      {
+        $lookup: {
+          from: "users",
+          foreignField: "_id",
+          localField: "createdBy",
+          as: "createdBy",
+        },
+      },
+      {
+        $lookup: {
+          from: "blogcomments",
+          localField: "_id",
+          foreignField: "blog",
+          as: "comments",
+        },
+      },
+      {
+        $addFields: {
+          createdBy: { $ifNull: [{ $arrayElemAt: ["$createdBy", 0] }, null] },
+          comments: { $size: "$comments" },
+          reactions: { $size: "$reactions" },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          coverImage: 1,
+          createdAt: 1,
+          tags: 1,
+          createdBy: {
+            name: 1,
+            username: 1,
+            _id: 1,
+            pic: 1,
+            position: 1,
+            createdAt: 1,
+          },
+          comments: 1,
+          reactions: 1, // Include the reactions count
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: (page - 1) * perPage },
+      { $limit: perPage },
+      {
+        $facet: {
+          totalCount: [
+            {
+              $group: {
+                _id: null,
+                count: { $sum: 1 },
+              },
+            },
+          ],
+          data: [{ $addFields: { page: page } }, { $project: { page: 0 } }],
+        },
+      },
+    ]);
 
+    const totalCount = blogs[0]?.totalCount[0]?.count || 0;
     const totalPages = Math.ceil(totalCount / perPage);
-
-    const blogs = await Blog.find({ organisation: req.bodyData.organisation })
-      .populate({ path: "createdBy", select: "-password" })
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * perPage)
-      .limit(perPage);
 
     res.status(200).send({
       message: "GET BLOGS SUCCESSFULLY",
       statusCode: 200,
       data: {
         totalPages: totalPages,
-        data: blogs,
+        data: blogs[0]?.data || [],
         currentPage: page,
       },
       success: true,
@@ -83,13 +138,53 @@ const deleteBlogById = async (req: any, res: Response, next: NextFunction) => {
 
 const getBlogById = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const blog = await Blog.findById(req.params.blogId);
-    if (!blog) {
+    const blogId = new mongoose.Types.ObjectId(req.params.blogId);
+    const blog = await Blog.aggregate([
+      {
+        $match: { _id: blogId },
+      },
+      {
+        $lookup: {
+          from: "users",
+          foreignField: "_id",
+          localField: "createdBy",
+          as: "createdBy",
+        },
+      },
+      {
+        $addFields: {
+          createdBy: { $ifNull: [{ $arrayElemAt: ["$createdBy", 0] }, null] },
+          reactions: { $size: "$reactions" },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          coverImage: 1,
+          content: 1,
+          tags: 1,
+          status: 1,
+          createdAt: 1,
+          createdBy: {
+            name: 1,
+            username: 1,
+            _id: 1,
+            pic: 1,
+            position: 1,
+            createdAt: 1,
+          },
+          reactions: 1,
+        },
+      },
+    ]);
+
+    if (blog.length === 0) {
       throw generateError(`BLOG DOES NOT EXISTS`, 400);
     }
+
     res.status(200).send({
       message: "GET BLOG SUCCESSFULLY",
-      data: blog,
+      data: blog[0],
       statusCode: 200,
       success: true,
     });

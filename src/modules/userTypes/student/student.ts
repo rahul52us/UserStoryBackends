@@ -28,6 +28,7 @@ const createStudent = async (req: any, res: Response, next: NextFunction) => {
       organisation: req.bodyData.organisation,
       pic: value.pic,
       password: value.password,
+      bio:value.bio,
       is_active: true,
     });
 
@@ -42,6 +43,7 @@ const createStudent = async (req: any, res: Response, next: NextFunction) => {
       fatherName: value.fatherName,
       motherName: value.motherName,
       language: value.language,
+      medium:value.medium,
       nickName: value.nickName,
       sibling: value.sibling,
       mobileNo: value.mobileNo,

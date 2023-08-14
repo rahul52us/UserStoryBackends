@@ -32,6 +32,8 @@ export const createStudentValidation = Joi.object({
     motherName:Joi.string().min(5).max(80).trim().required().messages(customMessages),
     sibling:Joi.number().messages(customMessages),
     language:Joi.array().messages(customMessages),
+    medium:Joi.string().trim().default('English'),
+    bio:Joi.string().trim(),
     addressInfo:Joi.array().min(1).required().messages(customMessages)
 }).options({
   abortEarly : false

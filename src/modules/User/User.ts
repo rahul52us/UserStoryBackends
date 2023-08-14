@@ -208,7 +208,7 @@ const loginUser = async (
       throw generateError(result.error.details, 422);
     }
 
-    const existUser = await User.findOne({ username: req.body.username });
+    const existUser = await User.findOne({ username: req.body.username }).populate('profile_details');
     if (!existUser) {
       throw generateError(`${req.body.username} user does not exist`, 401);
     }

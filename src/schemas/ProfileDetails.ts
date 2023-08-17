@@ -9,6 +9,10 @@ interface addressInfo  {
   pinCode?:string
 }
 
+interface linkInfo {
+
+}
+
 interface ProfileDetailsI extends Document {
   user: mongoose.Schema.Types.ObjectId;
   nickName?: string;

@@ -20,6 +20,7 @@ import Company from "../../schemas/Company";
 import RegisterVerifyMail from "../../services/email/RegisterEmail/Templates/SendMail";
 import VerifyEmail from "../../schemas/VerifyEmail";
 import ProfileDetails from "../../schemas/ProfileDetails";
+import mongoose from "mongoose";
 
 dotenv.config();
 const MeUser = async (req: any, res: Response): Promise<any> => {
@@ -393,12 +394,73 @@ const changePassword = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
+const updateUserProfile = async (req: any, res: Response, next: NextFunction) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const userDataToUpdate = {
+      name: req.body.firstName + " " + req.body.lastName,
+      username: req.body.username,
+      pic: req.body.pic,
+      bio: req.body.bio,
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      userDataToUpdate,
+      { new: true }
+    ).populate("profile_details").session(session);
+
+    if (!updatedUser) {
+      throw generateError('User does not exist', 400);
+    }
+
+    const profileDetailsId = updatedUser.profile_details;
+    const profileDetailsDataToUpdate = {
+      addressInfo: req.body.addressInfo,
+      motherName:req.body.motherName,
+      fatherName:req.body.fatherName,
+      sibling:req.body.sibling,
+      nickName:req.body.nickName,
+      phoneNo:req.body.phoneNo,
+      mobileNo:req.body.mobileNo
+    };
+
+    const updatedProfileDetails = await ProfileDetails.findByIdAndUpdate(
+      profileDetailsId,
+      profileDetailsDataToUpdate,
+      { new: true }
+    ).session(session);
+
+    if (!updatedProfileDetails) {
+      throw generateError('Profile details not found', 400);
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).send({
+      message: 'User and profile details updated successfully',
+      data: { ...updatedUser.toObject(), profile_details: updatedProfileDetails.toObject() },
+      statusCode: 200,
+      status: 'success',
+    });
+  } catch (error: any) {
+    await session.abortTransaction();
+    session.endSession();
+    next(error);
+  }
+};
+
+
 export {
   createUser,
   loginUser,
   MeUser,
   forgotPassword,
   resetPassword,
+  updateUserProfile,
   changePassword,
   VerifyEmailToken,
   getUsersByCompany,

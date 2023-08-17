@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { NextFunction, Response } from "express";
 import {
   createStudentValidation,
@@ -130,4 +131,63 @@ const getStudents = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export { createStudent, getStudents };
+const getStudentById = async (req : any, res : Response, next : NextFunction) => {
+  try {
+    const studentData = await Student.findById(req.params._id).populate({
+      path: 'user',
+      select : '-password',
+      populate: {
+        path: 'profile_details',
+        model: 'ProfileDetails'
+      }
+    });
+
+    if (!studentData) {
+      throw generateError('Student does not exist', 400);
+    }
+
+    const userData = studentData;
+
+    res.status(200).send({
+      message: 'Get Successfully Student Data',
+      data: userData,
+      statusCode: 200,
+      status: 'success'
+    });
+  } catch (err) {
+    console.error('Error fetching student data:', err);
+    next(err);
+  }
+};
+
+const updateStudentProfile = async (req : any , res : Response, next : NextFunction) => {
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    const updatedStudent = await Student.findByIdAndUpdate(
+      req.params._id,
+      {
+        $set: req.body,
+        $push: { "user": req.body },
+      },
+      { new: true }
+    ).populate("user").session(session);
+
+    if (!updatedStudent) {
+      throw generateError('Student does not exists', 400)
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+    res.status(200).send({
+      message : 'Student Updated Successfully',
+      data : updatedStudent,
+      statusCode : 200,
+      status : 'success'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export { createStudent, getStudents,getStudentById,updateStudentProfile };

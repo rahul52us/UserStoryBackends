@@ -7,5 +7,5 @@ const router = express.Router()
 router.post('/create',authenticate, createStudent)
 router.post('/',authenticate,getStudents)
 router.get('/:_id',authenticate,getStudentById)
-router.put('/:_id',authenticate,updateStudentProfile)
+router.put('/profile/:_id',authenticate,updateStudentProfile)
 export default router;

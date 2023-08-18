@@ -424,7 +424,8 @@ const updateUserProfile = async (req: any, res: Response, next: NextFunction) =>
       sibling:req.body.sibling,
       nickName:req.body.nickName,
       phoneNo:req.body.phoneNo,
-      mobileNo:req.body.mobileNo
+      mobileNo:req.body.mobileNo,
+      emergencyNo:req.body.emergencyNo
     };
 
     const updatedProfileDetails = await ProfileDetails.findByIdAndUpdate(

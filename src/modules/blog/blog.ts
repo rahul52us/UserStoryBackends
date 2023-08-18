@@ -172,6 +172,7 @@ const getBlogById = async (req: any, res: Response, next: NextFunction) => {
             pic: 1,
             position: 1,
             createdAt: 1,
+            bio:1
           },
           reactions: 1,
         },

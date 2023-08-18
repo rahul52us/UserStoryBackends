@@ -155,39 +155,74 @@ const getStudentById = async (req : any, res : Response, next : NextFunction) =>
       status: 'success'
     });
   } catch (err) {
-    console.error('Error fetching student data:', err);
     next(err);
   }
 };
 
-const updateStudentProfile = async (req : any , res : Response, next : NextFunction) => {
-  try {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    const updatedStudent = await Student.findByIdAndUpdate(
-      req.params._id,
-      {
-        $set: req.body,
-        $push: { "user": req.body },
-      },
-      { new: true }
-    ).populate("user").session(session);
+const updateStudentProfile = async (req: any, res: Response, next: NextFunction) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-    if (!updatedStudent) {
-      throw generateError('Student does not exists', 400)
+  try {
+
+    const student = await Student.findById(req.params._id)
+    if(!student) {
+      throw generateError('User does not exits',400)
+    }
+
+    const userDataToUpdate = {
+      name: req.body.name,
+      username: req.body.username,
+      pic: req.body.pic,
+      bio: req.body.bio,
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      student.user,
+      userDataToUpdate,
+      { new: true }
+    ).populate("profile_details").session(session);
+
+    if (!updatedUser) {
+      throw generateError('User does not exist', 400);
+    }
+
+    const profileDetailsId = updatedUser.profile_details;
+    const profileDetailsDataToUpdate = {
+      addressInfo: req.body.addressInfo,
+      motherName:req.body.motherName,
+      fatherName:req.body.fatherName,
+      sibling:req.body.sibling,
+      nickName:req.body.nickName,
+      phoneNo:req.body.phoneNo,
+      mobileNo:req.body.mobileNo,
+      emergencyNo:req.body.emergencyNo
+    };
+
+    const updatedProfileDetails = await ProfileDetails.findByIdAndUpdate(
+      profileDetailsId,
+      profileDetailsDataToUpdate,
+      { new: true }
+    ).session(session);
+
+    if (!updatedProfileDetails) {
+      throw generateError('Student details not found', 400);
     }
 
     await session.commitTransaction();
     session.endSession();
+
     res.status(200).send({
-      message : 'Student Updated Successfully',
-      data : updatedStudent,
-      statusCode : 200,
-      status : 'success'
-    })
-  } catch (error) {
-    next(error)
+      message: 'Student Details updated successfully',
+      data: { ...updatedUser.toObject(), profile_details: updatedProfileDetails.toObject() },
+      statusCode: 200,
+      status: 'success',
+    });
+  } catch (error: any) {
+    await session.abortTransaction();
+    session.endSession();
+    next(error);
   }
-}
+};
 
 export { createStudent, getStudents,getStudentById,updateStudentProfile };

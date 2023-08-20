@@ -33,6 +33,7 @@ export const createQuiz = async (
       createdBy: req.body.createdBy,
       class: req.body.class,
       section: req.body.section,
+      thumbnail:req.body.thumbnail
     });
 
     const savedQuiz: any = await quiz.save();
@@ -111,12 +112,15 @@ export const createQuizCategory = async (
 
 export const getQuiz = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const quizData = await Quiz.find()
-      .sort({ createdAt: -1 })
+    const query = Quiz.find()
       .populate("category")
       .populate("class")
       .populate("section")
-      .populate("createdBy");
+      .populate("createdBy")
+      .sort({ createdAt: -1 });
+
+    const quizData = await query.exec();
+
     res.status(200).json({
       message: "GET QUIZ SUCCESSFULLY",
       data: quizData,

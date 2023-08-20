@@ -11,7 +11,7 @@ const testimonialCreateValidation = Joi.object({
     "any.required": "User is required",
     "string.empty": "User is required",
   }),
-  company: Joi.any().allow(null).messages({
+  organisation: Joi.any().allow(null).messages({
     "any.required": "Organisation is required",
     "string.empty": "Organisation is required",
   }),

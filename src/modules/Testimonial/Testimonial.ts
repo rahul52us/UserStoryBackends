@@ -9,12 +9,13 @@ const createTestimonail = async (
   next: NextFunction
 ) => {
   try {
-    req.body.company = req.bodyData.company
+    req.body.organisation = req.bodyData.organisation
     req.body.user = req.userId
     const result = testimonialCreateValidation.validate(req.body);
     if (result.error) {
       throw generateError(result.error.details[0], 422);
     }
+
     const test = new Testimonial(req.body);
     const createdTestimonial = await test.save();
     if (!createdTestimonial) {
@@ -39,7 +40,7 @@ const getTestimonials = async(req : any, res : Response , next : NextFunction) =
     let limit = req.query.limit ? req.query.limit : 2
     if(req.query.company)
     {
-      query.company = req.query.company
+      query.organisation = req.query.organisation
     }
     const testimonials = await Testimonial.find(query).sort({ createdAt: -1 }).skip((req.query.page - 1) * limit).limit(limit)
     res.status(200).send({

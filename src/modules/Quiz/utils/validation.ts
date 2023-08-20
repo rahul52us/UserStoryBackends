@@ -27,6 +27,12 @@ export const quizCreateValidation = Joi.object({
     "any.required": "Description is required.",
   }),
 
+  thumbnail: Joi.string().trim().messages({
+    "string.base": "Thumbnail must be a string.",
+    "string.empty": "Thumbnail is required.",
+    "any.required": "Thumbnail is required.",
+  }),
+
   class: Joi.string().required().messages({
     "string.base": "Class must be a string.",
     "string.empty": "Class is required.",

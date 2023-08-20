@@ -4,7 +4,7 @@ interface TestimonialI extends Document {
   name: string;
   user: mongoose.Schema.Types.ObjectId;
   profession:string;
-  company: mongoose.Schema.Types.ObjectId;
+  organisation: mongoose.Schema.Types.ObjectId;
   image: mongoose.Schema.Types.ObjectId;
   description: string;
 }
@@ -16,9 +16,9 @@ const TestimonialSchema = new mongoose.Schema<TestimonialI>(
       ref: "User",
       required: [true, "User is required"],
     },
-    company: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Organisation",
+    organisation : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : 'Company',
       required: [true, "Organisation is required"],
     },
     name: {

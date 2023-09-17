@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface VideoI extends Document {
   title: string;
-  company: mongoose.Schema.Types.ObjectId;
+  organisation: mongoose.Schema.Types.ObjectId;
   createdBy: mongoose.Schema.Types.ObjectId;
   category:mongoose.Schema.Types.ObjectId;
   thumbnail:string;
@@ -24,7 +24,7 @@ export const VideoSchema = new Schema<VideoI>(
       trim: true,
     },
 
-    company: {
+    organisation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
       required: true,

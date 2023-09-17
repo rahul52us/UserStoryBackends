@@ -1,7 +1,7 @@
 import * as Joi from "joi";
 
 const videoCreateCategoryValidation = Joi.object({
-  company: Joi.any().required().allow(null).messages({
+  organisation: Joi.any().required().allow(null).messages({
     "any.required": "Company is required",
     "string.empty": "Company is required",
   }),
@@ -48,12 +48,12 @@ const videoCreateCategoryValidation = Joi.object({
 }).options({ abortEarly: false });
 
 const createVideosValidation = Joi.object({
-  company: Joi.any().required().allow(null).messages({
+  organisation: Joi.any().required().allow(null).messages({
     "any.required": "Company is required",
     "string.empty": "Company is required",
   }),
 
-  category: Joi.any().required().allow(null).messages({
+  category: Joi.any().required().messages({
     "any.required": "Category is required",
     "string.empty": "Category is required",
   }),
@@ -120,7 +120,7 @@ const createVideosValidation = Joi.object({
 
 const getVideosValidations = Joi.object({
 
-  company: Joi.any().required().allow(null).messages({
+  organisation: Joi.any().required().allow(null).messages({
     "any.required": "Company is required",
     "string.empty": "Company is required",
   }),

@@ -17,7 +17,7 @@ const createVideoCategory = async (
 ) => {
   try {
     req.body.createdBy = req.userId;
-    req.body.company = req.bodyData.company;
+    req.body.organisation = req.bodyData.organisation;
 
     const result = videoCreateCategoryValidation.validate(req.body);
 
@@ -46,7 +46,7 @@ const createVideoCategory = async (
 const createVideo = async (req: any, res: Response, next: NextFunction) => {
   try {
     req.body.createdBy = req.userId;
-    req.body.company = req.bodyData.company;
+    req.body.organisation = req.bodyData.organisation;
     const result = createVideosValidation.validate(req.body);
     if (result.error) {
       throw generateError(result.error.details, 422);
@@ -71,7 +71,7 @@ const getCategories = async (req: any, res: Response, next: NextFunction) => {
   try {
     const pipeline: any = [
       {
-        $match: { company: req.bodyData.company },
+        $match: { company: req.bodyData.organisation },
       },
       {
         $sort : {
@@ -136,7 +136,7 @@ const getVideos = async (req: any, res: Response, next: NextFunction) => {
     const pipeline: any = [
       {
         $match: {
-          company: new mongoose.Types.ObjectId(req.bodyData.company),
+          company: new mongoose.Types.ObjectId(req.bodyData.organisation),
           category: new mongoose.Types.ObjectId(req.body.category),
         },
       },

@@ -15,7 +15,7 @@ const Createclass = async (req: any, res: Response, next: NextFunction) => {
       endYear: req.body.endYear,
       organisation: req.body.organisation,
       createdBy: req.body.createdBy,
-      medium:req.body.medium
+      medium: req.body.medium,
     });
 
     const savedClass = await classInstance.save();
@@ -59,7 +59,7 @@ const UpdateClass = async (req: any, res: Response, next: NextFunction) => {
     classInstance.name = name;
     classInstance.startYear = startYear;
     classInstance.endYear = endYear;
-    classInstance.medium = medium
+    classInstance.medium = medium;
 
     const updatedClass = await classInstance.save();
 
@@ -83,7 +83,7 @@ const UpdateClass = async (req: any, res: Response, next: NextFunction) => {
 
       updatedClass.sections = updatedSections.map((item) => item._id);
       await updatedClass.save();
-      updatedClass.sections = updatedSections
+      updatedClass.sections = updatedSections;
     }
 
     res.status(200).send({
@@ -104,17 +104,35 @@ const getClasses = async (req: any, res: Response, next: NextFunction) => {
       throw generateError(error.details, 422);
     }
 
-    const classes = await Class.find({
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 15;
+    const skip = (page - 1) * pageSize;
+
+    const classesQuery = Class.find({
       organisation: req.bodyData.organisation,
       startYear: { $gte: req.body.startYear },
       endYear: { $lte: req.body.endYear },
-    }).sort({createdAt:-1})
+    })
+      .skip(skip)
+      .limit(pageSize)
+      .sort({ createdAt: -1 })
       .populate("createdBy")
       .populate("sections");
 
+    // Execute the query and retrieve the results as an array
+    const classes = await classesQuery.exec();
+
+    const totalClassesCount = await Class.countDocuments({
+      organisation: req.bodyData.organisation,
+      startYear: { $gte: req.body.startYear },
+      endYear: { $lte: req.body.endYear },
+    });
+
+    const totalPages = Math.ceil(totalClassesCount / pageSize);
+
     return res.status(200).send({
       message: "Get Classes Successfully",
-      data: classes,
+      data: { classes, totalPages },
       statusCode: 200,
       success: true,
     });
@@ -122,7 +140,5 @@ const getClasses = async (req: any, res: Response, next: NextFunction) => {
     next(err);
   }
 };
-
-
 
 export { Createclass, getClasses, UpdateClass };

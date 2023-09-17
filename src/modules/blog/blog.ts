@@ -41,70 +41,25 @@ const getBlogs = async (req: any, res: Response, next: NextFunction) => {
     const page = req.query.page || 1;
     const perPage = 10;
 
-    const blogs = await Blog.aggregate([
-      {
-        $match: { organisation: req.bodyData.organisation },
-      },
-      {
-        $lookup: {
-          from: "users",
-          foreignField: "_id",
-          localField: "createdBy",
-          as: "createdBy",
-        },
-      },
-      {
-        $lookup: {
-          from: "blogcomments",
-          localField: "_id",
-          foreignField: "blog",
-          as: "comments",
-        },
-      },
-      {
-        $addFields: {
-          createdBy: { $ifNull: [{ $arrayElemAt: ["$createdBy", 0] }, null] },
-          comments: { $size: "$comments" },
-          reactions: { $size: "$reactions" },
-        },
-      },
-      {
-        $project: {
-          title: 1,
-          coverImage: 1,
-          createdAt: 1,
-          tags: 1,
-          createdBy: {
-            name: 1,
-            username: 1,
-            _id: 1,
-            pic: 1,
-            position: 1,
-            createdAt: 1,
-          },
-          comments: 1,
-          reactions: 1, // Include the reactions count
-        },
-      },
-      { $sort: { createdAt: -1 } },
-      { $skip: (page - 1) * perPage },
-      { $limit: perPage },
-      {
-        $facet: {
-          totalCount: [
-            {
-              $group: {
-                _id: null,
-                count: { $sum: 1 },
-              },
-            },
-          ],
-          data: [{ $addFields: { page: page } }, { $project: { page: 0 } }],
-        },
-      },
-    ]);
+    const query = {
+      organisation: req.bodyData.organisation
+    };
 
-    const totalCount = blogs[0]?.totalCount[0]?.count || 0;
+    const blogs = await Blog.find(query)
+      .populate({
+        path: 'createdBy',
+        select: 'name username _id pic position createdAt',
+      })
+      .populate({
+        path: 'comments',
+        select: '_id',
+      })
+      .select('title coverImage createdAt tags createdBy comments reactions')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    const totalCount = await Blog.countDocuments(query);
     const totalPages = Math.ceil(totalCount / perPage);
 
     res.status(200).send({
@@ -112,7 +67,7 @@ const getBlogs = async (req: any, res: Response, next: NextFunction) => {
       statusCode: 200,
       data: {
         totalPages: totalPages,
-        data: blogs[0]?.data || [],
+        data: blogs,
         currentPage: page,
       },
       success: true,
@@ -121,6 +76,7 @@ const getBlogs = async (req: any, res: Response, next: NextFunction) => {
     next(err);
   }
 };
+
 
 const deleteBlogById = async (req: any, res: Response, next: NextFunction) => {
   try {
@@ -203,7 +159,7 @@ const createNewComment = async (
     const instance = new CommentBlog({
       user: req.userId,
       organisation: req.bodyData.organisation,
-      blog: req.body.blogId,
+      blog: req.params.blogId,
       content: req.body.content,
       parentComment: req.body.parentComment,
     });
@@ -222,14 +178,21 @@ const createNewComment = async (
 const getComments = async (req: any, res: Response, next: NextFunction) => {
   try {
     const page = req.query.page || 1;
-    const pageSize = 10;
+    const pageSize = 5;
+
+    const skip = (page - 1) * pageSize;
+
+    const totalComments = await CommentBlog.countDocuments({ blog: req.params.blogId });
+
+    const totalPages = Math.ceil(totalComments / pageSize);
+
     const comments = await CommentBlog.find({ blog: req.params.blogId })
       .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
+      .skip(skip)
       .limit(pageSize)
       .populate({
         path: "user",
-        select: "name username",
+        select: "name username pic",
       })
       .populate({
         path: "replies",
@@ -241,13 +204,14 @@ const getComments = async (req: any, res: Response, next: NextFunction) => {
 
     res.status(200).send({
       message: "GET COMMENTS SUCCESSFULLY",
-      data: comments,
+      data: {comments, totalPages, totalComments},
       statusCode: 200,
       success: true,
     });
   } catch (err) {
     next(err);
   }
+
 };
 
 export {

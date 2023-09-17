@@ -10,6 +10,6 @@ router.get('/:blogId',getBlogById)
 router.delete('/:blogId',authenticate,deleteBlogById)
 
 
-router.post('/comment/:blogId/create',authenticate,createNewComment)
+router.post('/comment/:blogId',authenticate,createNewComment)
 router.get('/comments/:blogId',getComments)
 export default router;

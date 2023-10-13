@@ -95,7 +95,6 @@ const createStudent = async (req: any, res: Response, next: NextFunction) => {
 const getStudents = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { error, value } = getStudentsValidation.validate(req.body);
-
     if (error) {
       throw generateError(error.details, 422);
     }
